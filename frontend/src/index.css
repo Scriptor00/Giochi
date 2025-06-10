@@ -1,0 +1,541 @@
+/* --- Global Styles --- */
+:root {
+  /* Colori base per il tema scuro */
+  --color-background-dark: #1a1a2e; /* Sfondo principale scuro */
+  --color-surface-dark: #16213e; /* Superfici (cards, contenitori) leggermente più chiare dello sfondo */
+  --color-text-light: #e0e0e0; /* Testo chiaro principale */
+  --color-text-accent: #e94560; /* Accento per titoli, link primari */
+  --color-text-secondary: #a0a0a0; /* Testo secondario, descrizioni */
+  --color-button-primary: #0f3460; /* Pulsante primario */
+  --color-button-hover: #1b539c; /* Hover per pulsante primario */
+  --color-border: #0f3460; /* Bordi sottili, focus */
+  --color-link: #e94560; /* Colore link */
+  --color-link-hover: #e07d92; /* Hover link */
+
+  font-family: 'Roboto', sans-serif; /* Un font moderno e leggibile */
+  line-height: 1.6;
+  font-weight: 400;
+
+  color-scheme: dark; /* Predilige il tema scuro */
+  color: var(--color-text-light);
+  background-color: var(--color-background-dark);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Importa il font Roboto da Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+/* --- Body Base (Mobile-First) --- */
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0; /* Rimuovi padding extra per schermi piccoli */
+}
+
+/* --- Headings (Mobile-First) --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', sans-serif;
+  color: var(--color-text-accent);
+  line-height: 1.2;
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+  text-align: center; /* Centra i titoli per mobile */
+}
+
+h1 {
+  font-size: 2em; /* Dimensione più piccola per mobile */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Links (General) --- */
+a {
+  font-weight: 500;
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* --- Buttons (General) --- */
+/* Stile base per tutti i pulsanti */
+.button {
+    border-radius: 8px;
+    border: 1px solid transparent; 
+    padding: 0.8em 1.5em;
+    font-size: 1em;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    width: auto;
+    display: inline-block; /* Per pulsanti che non occupano tutta la larghezza */
+}
+
+/* Stile specifico per i pulsanti primari (ex home-link-button) */
+.primary-button {
+    background-color: var(--color-button-primary);
+    color: var(--color-text-light);
+}
+
+.primary-button:hover {
+    border-color: var(--color-button-hover); 
+    background-color: var(--color-button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto var(--color-border);
+  outline-offset: 2px;
+}
+
+/* --- Navigation Bar (Aggiornata per Hamburger) --- */
+nav.main-nav { /* Ho cambiato da 'nav' generico a 'nav.main-nav' per evitare conflitti */
+    width: 100%;
+    background-color: var(--color-surface-dark);
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-between; /* Sposta i link a sinistra e l'hamburger a destra */
+    align-items: center;
+    margin-bottom: 20px;
+    z-index: 1000; /* Assicura che la nav sia sopra gli altri elementi */
+    position: sticky; /* Rende la nav sticky in alto */
+    top: 0;
+}
+
+.nav-links-left {
+    display: none; /* Nascosto di default per mobile, mostrato solo su desktop */
+    gap: 15px; /* Spazio tra i link */
+}
+
+.nav-link {
+    color: var(--color-text-light);
+    font-size: 1em; /* Leggermente più piccolo per far stare più link */
+    padding: 8px 12px; /* Riduci il padding */
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    white-space: nowrap; /* Evita che i link vadano a capo */
+}
+
+.nav-link:hover {
+    background-color: var(--color-button-primary);
+    color: var(--color-text-accent);
+}
+
+.active-nav-link { /* Stile per il link attivo nella navbar */
+    background-color: var(--color-button-primary);
+    color: var(--color-text-accent);
+    font-weight: 700;
+}
+
+.add-game-nav-link { /* Stile specifico per il link "Aggiungi Gioco" nella nav principale */
+    color: #4CAF50; /* Un tocco di verde per l'aggiunta */
+    border: 1px solid #4CAF50;
+}
+
+.add-game-nav-link:hover {
+    background-color: #388E3C;
+    color: white;
+    border-color: #388E3C;
+}
+
+/* Hamburger Icon */
+.hamburger-icon {
+    display: block; /* Visibile di default per mobile */
+    background: none;
+    border: none;
+    font-size: 1.8em;
+    color: var(--color-text-light);
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.hamburger-icon:hover {
+    color: var(--color-text-accent);
+}
+
+
+/* --- Hamburger Menu (NUOVO STILE) --- */
+.hamburger-menu {
+    position: fixed;
+    top: 0;
+    right: -280px; /* Inizialmente fuori schermo a destra (larghezza 280px) */
+    width: 280px; /* Larghezza del menu */
+    height: 100%;
+    background-color: var(--color-surface-dark);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    transition: right 0.4s ease-in-out; /* Animazione di scorrimento */
+    z-index: 1001; /* Sopra l'overlay */
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0; /* Padding verticale, orizzontale 0 per i link */
+}
+
+.hamburger-menu.open {
+    right: 0; /* Scorri in vista */
+}
+
+.hamburger-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Meno spazio tra i link nel menu */
+    padding-top: 60px; /* Spazio per il bottone di chiusura in alto */
+}
+
+.hamburger-link {
+    color: var(--color-text-light);
+    font-size: 1.1em; /* Leggermente più piccolo */
+    padding: 10px 20px; /* Più padding orizzontale */
+    border-radius: 0; /* Rimuovi border-radius per look full-width */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center; /* Allinea icona e testo */
+}
+
+.hamburger-link i {
+    margin-right: 15px; 
+    color: var(--color-text-accent); 
+    font-size: 1.2em; /* Leggermente più piccolo */
+}
+
+.hamburger-link:hover {
+    background-color: var(--color-button-primary);
+    color: var(--color-text-accent);
+    transform: translateX(5px); 
+}
+
+.hamburger-link.active-link { 
+    background-color: var(--color-button-primary);
+    color: var(--color-text-accent);
+    font-weight: 700;
+}
+
+.hamburger-link.add-game-link i {
+    color: #4CAF50; 
+}
+
+.hamburger-link.add-game-link:hover {
+    background-color: #388E3C; 
+    color: white; 
+}
+
+.close-menu-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2em; /* Più grande per facile clic */
+    color: var(--color-text-light);
+    cursor: pointer;
+    z-index: 1002; 
+    transition: color 0.3s ease;
+}
+
+.close-menu-button:hover {
+    color: var(--color-text-accent);
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    z-index: 1000; 
+}
+
+
+/* --- Home Page Specific Styles (AGGIORNATI) --- */
+
+.home-container {
+    max-width: 100%; /* Hero section a tutta larghezza */
+    margin: 0 auto; 
+    padding: 0; 
+    color: var(--color-text-light);
+    overflow: hidden; 
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1542759567-0c7760178a23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80') no-repeat center center / cover;
+    min-height: 70vh; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 40px 20px;
+    box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.5); 
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 20px; 
+}
+
+.hero-title {
+    font-size: 2.8em; 
+    margin-bottom: 15px;
+    color: white; 
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.hero-subtitle {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-button {
+    font-size: 1.1em; 
+    padding: 12px 25px;
+    border-radius: 50px; 
+}
+
+/* Footer della Home Page */
+.home-footer-new {
+    margin-top: 50px;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.85em;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface-dark); 
+    border-top: 1px solid var(--color-border);
+}
+
+
+/* --- Giochi List Grid & Card Styles --- */
+
+.giochi-list-container {
+  max-width: 1200px; 
+  margin: 30px auto;
+  padding: 0 20px; 
+  text-align: center;
+}
+
+.giochi-list-container h1 {
+    margin-bottom: 40px;
+}
+
+.giochi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+  gap: 20px; 
+  justify-content: center; 
+  padding: 0;
+  list-style: none; 
+  margin: 0; 
+}
+
+.gioco-card-link {
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+    height: 100%; 
+}
+
+.gioco-card {
+  background-color: var(--color-surface-dark);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; 
+  overflow: hidden; 
+}
+
+.gioco-card:hover {
+  transform: translateY(-8px); 
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+.gioco-card-image {
+  width: 120px; 
+  height: 160px; 
+  object-fit: cover; 
+  object-position: center; 
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.gioco-card-title {
+  color: var(--color-text-light);
+  font-size: 1.1em; 
+  margin: 0 0 5px 0; /* Aggiunto margine sotto il titolo per separare dalla meta */
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  padding: 0 5px;
+}
+
+.gioco-card-meta { 
+    font-size: 0.85em; 
+    color: var(--color-text-secondary);
+    margin-top: 2px; 
+    margin-bottom: 2px; 
+    width: 100%; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    padding: 0 5px; 
+}
+
+.no-games-message { 
+    font-size: 1.2em;
+    color: var(--color-text-secondary);
+    margin-top: 50px;
+}
+
+/* --- Media Queries per la responsività --- */
+
+@media (min-width: 481px) { /* Tablet e schermi più grandi */
+  h1 {
+    font-size: 2.8em;
+  }
+  
+  nav.main-nav {
+    padding: 15px 30px; /* Più padding su schermi più grandi */
+  }
+
+  .nav-link {
+    font-size: 1.1em;
+    padding: 5px 10px;
+  }
+
+  .giochi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 25px; 
+  }
+  .gioco-card-image {
+    width: 130px; 
+    height: 180px;
+  }
+  .gioco-card-title {
+    font-size: 1.15em;
+  }
+  /* Hero Section per Tablet */
+  .hero-title {
+    font-size: 3.5em;
+  }
+  .hero-subtitle {
+    font-size: 1.2em;
+  }
+  .hero-button {
+    font-size: 1.2em;
+    padding: 15px 30px;
+  }
+}
+
+@media (min-width: 769px) { /* Desktop */
+  h1 {
+    font-size: 3.2em;
+  }
+  
+  nav.main-nav {
+    justify-content: flex-start; /* Allinea tutto a sinistra */
+    gap: 25px; /* Spazio tra i link della nav */
+  }
+
+  .nav-links-left {
+      display: flex; /* Mostra i link della nav principale su desktop */
+  }
+
+  .hamburger-icon {
+      display: none; 
+  }
+
+  .hamburger-menu {
+      display: none; 
+  }
+
+  .giochi-grid {
+    grid-template-columns: repeat(5, minmax(180px, 1fr)); 
+    gap: 30px; 
+  }
+  .gioco-card-image {
+    width: 150px; 
+    height: 200px;
+  }
+  .gioco-card-title {
+    font-size: 1.2em;
+  }
+
+  .hero-section {
+      min-height: 60vh;
+  }
+
+  .hero-title {
+      font-size: 4em;
+  }
+
+  .hero-subtitle {
+      font-size: 1.4em;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background-dark: #f0f2f5;
+    --color-surface-dark: #ffffff;
+    --color-text-light: #333333;
+    --color-text-accent: #007bff;
+    --color-text-secondary: #666666;
+    --color-button-primary: #007bff;
+    --color-button-hover: #0056b3;
+    --color-border: #cccccc;
+    --color-link: #007bff;
+    --color-link-hover: #0056b3;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    text-shadow: none;
+  }
+  .home-container, .gioco-card { 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button:hover, .primary-button:hover, .gioco-card:hover { 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  .hamburger-menu, .overlay {
+    background-color: var(--color-surface-dark); 
+  }
+  .hamburger-menu {
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  }
+  .close-menu-button {
+    color: var(--color-text-light);
+  }
+  .close-menu-button:hover {
+    color: var(--color-text-accent);
+  }
+}
