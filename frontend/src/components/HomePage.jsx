@@ -1,3 +1,4 @@
+// src/components/HomePage.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,6 +16,10 @@ function HomePage() {
                     {/* Il link principale per esplorare la collezione */}
                     <Link to="/giochi" className="button primary-button hero-button">
                         Esplora la Collezione
+                    </Link>
+                    {/* NUOVO PULSANTE: Aggiungi un Nuovo Gioco */}
+                    <Link to="/aggiungi-gioco" className="button primary-button hero-button add-game-home-button">
+                        Aggiungi un Nuovo Gioco
                     </Link>
                 </div>
             </section>

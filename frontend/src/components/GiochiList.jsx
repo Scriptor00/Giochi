@@ -35,7 +35,6 @@ function GiochiList() {
         return <h2 style={{ textAlign: 'center', color: 'var(--color-text-light)', marginTop: '50px' }}>Caricamento giochi...</h2>;
     }
 
-    // Visualizzazione dello stato di errore
     if (error) {
         return (
             <div style={{ textAlign: 'center', color: 'var(--color-text-light)', marginTop: '50px', padding: '0 20px' }}>

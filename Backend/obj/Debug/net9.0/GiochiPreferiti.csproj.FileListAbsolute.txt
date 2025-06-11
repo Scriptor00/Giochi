@@ -192,3 +192,4 @@ C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\refint\Gio
 C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\GiochiPreferiti.pdb
 C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\GiochiPreferiti.genruntimeconfig.cache
 C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\ref\GiochiPreferiti.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\GiochiPreferiti.sourcelink.json
