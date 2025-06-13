@@ -66,6 +66,9 @@ function ListaDesideri() {
                                 <h3 className="gioco-card-title">{gioco.nome}</h3>
                                 {gioco.genere && <p className="gioco-card-genre">{gioco.genere}</p>}
                                 {gioco.piattaforma && <p className="gioco-card-platform">{gioco.piattaforma}</p>}
+                                {gioco.inListaDesideri && (
+    <p className="gioco-card-meta">Stato: Da giocare</p>
+)}
                             </div>
                         </Link>
                     ))}

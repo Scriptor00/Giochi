@@ -11,11 +11,9 @@ function HomePage() {
                         Benvenuto nel tuo santuario videoludico personale.
                         Qui ogni avventura prende vita e ogni ricordo è custodito.
                     </p>
-                    {/* Il link principale per esplorare la collezione */}
                     <Link to="/giochi" className="button primary-button hero-button">
                         Esplora la Collezione
                     </Link>
-                    {/* NUOVO PULSANTE: Aggiungi un Nuovo Gioco */}
                     <Link to="/aggiungi-gioco" className="button primary-button hero-button add-game-home-button">
                         Aggiungi un Nuovo Gioco
                     </Link>
