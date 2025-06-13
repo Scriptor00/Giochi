@@ -1,46 +1,65 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading.Tasks; 
-using GiochiPreferiti.Models; // <-- AGGIUNGI QUESTA RIGA per la classe Gioco
-using GiochiPreferiti.Data;   // <-- AGGIUNGI QUESTA RIGA per ApplicationDbContext
-using Microsoft.EntityFrameworkCore; // <-- AGGIUNGI QUESTA RIGA per EntityState e DbUpdateConcurrencyException
-using System.Linq; // <-- AGGIUNGI QUESTA RIGA per il metodo Any()
+using System.Threading.Tasks;
+using GiochiPreferiti.Models;
+using GiochiPreferiti.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 [ApiController]
-[Route("[controller]")] // Questo mapperà il controller a /giochi
+[Route("[controller]")]
 public class GiochiController : ControllerBase
 {
-    private readonly ApplicationDbContext _context; 
+    private readonly ApplicationDbContext _context;
 
     public GiochiController(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    // GET: /giochi
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Gioco>>> GetGiochi()
+    public async Task<ActionResult<IEnumerable<Gioco>>> GetGiochi(
+        [FromQuery] bool? completato = null,
+        [FromQuery] bool? inListaDesideri = null)
     {
-        return await _context.Giochi.ToListAsync();
+        IQueryable<Gioco> query = _context.Giochi;
+
+        // Filtra i giochi in base alla proprietà Completato se il parametro è fornito
+        // Se completato è null, non applica il filtro
+        if (completato.HasValue)
+        {
+            query = query.Where(g => g.Completato == completato.Value);
+        }
+
+        // Filtra i giochi in base alla proprietà InListaDesideri se il parametro è fornito
+        // Se inListaDesideri è null, non applica il filtro
+        if (inListaDesideri.HasValue)
+        {
+            query = query.Where(g => g.InListaDesideri == inListaDesideri.Value);
+        }
+
+        return await query.AsNoTracking().ToListAsync();
     }
 
-    // GET: /giochi/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<Gioco>> GetGioco(int id) 
+    public async Task<ActionResult<Gioco>> GetGioco(int id)
     {
         var gioco = await _context.Giochi.FindAsync(id);
-
         if (gioco == null)
         {
             return NotFound();
         }
-
         return gioco;
     }
 
     [HttpPost]
     public async Task<ActionResult<Gioco>> PostGioco(Gioco gioco)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         _context.Giochi.Add(gioco);
         await _context.SaveChangesAsync();
 
@@ -52,7 +71,7 @@ public class GiochiController : ControllerBase
     {
         if (id != gioco.Id)
         {
-            return BadRequest("ID del gioco non corrisponde all'oggetto fornito."); 
+            return BadRequest("ID del gioco non corrisponde all'oggetto fornito.");
         }
 
         _context.Entry(gioco).State = EntityState.Modified;
@@ -63,7 +82,7 @@ public class GiochiController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!GiocoExists(id)) 
+            if (!GiocoExists(id))
             {
                 return NotFound();
             }
@@ -72,7 +91,6 @@ public class GiochiController : ControllerBase
                 throw;
             }
         }
-
         return NoContent();
     }
 

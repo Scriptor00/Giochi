@@ -1,6 +1,4 @@
-// src/components/HamburgerMenu.jsx
-import React from 'react';
-import { NavLink } from 'react-router-dom'; // Usiamo NavLink per lo styling del link attivo
+import { NavLink } from 'react-router-dom'; 
 
 function HamburgerMenu({ isOpen, toggleMenu }) {
     return (
@@ -18,11 +16,11 @@ function HamburgerMenu({ isOpen, toggleMenu }) {
 
                     {/* Link alle diverse categorie del diario di giochi */}
                     <NavLink to="/giochi" className="hamburger-link" onClick={toggleMenu} exact activeClassName="active-link">
-                        <i className="fas fa-list-alt"></i> Tutti i Giochi
+                        <i className="fas fa-list-alt"></i> Giochi Completati
                     </NavLink>
-                    <NavLink to="/giochi-completati" className="hamburger-link" onClick={toggleMenu} activeClassName="active-link">
+                    {/* <NavLink to="/giochi-completati" className="hamburger-link" onClick={toggleMenu} activeClassName="active-link">
                         <i className="fas fa-check-circle"></i> Giocati
-                    </NavLink>
+                    </NavLink> */}
                     <NavLink to="/giochi-in-corso" className="hamburger-link" onClick={toggleMenu} activeClassName="active-link">
                         <i className="fas fa-play-circle"></i> In Corso
                     </NavLink>

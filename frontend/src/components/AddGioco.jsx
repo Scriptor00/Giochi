@@ -10,11 +10,33 @@ function AddGioco() {
     const [piattaforma, setPiattaforma] = useState('');
     const [completato, setCompletato] = useState(false);
     const [votoPersonale, setVotoPersonale] = useState(0);
+    const [inListaDesideri, setInListaDesideri] = useState(false); 
 
     const [message, setMessage] = useState(null); 
     const [error, setError] = useState(null); 
 
     const navigate = useNavigate(); 
+
+    // Handler per la checkbox "Completato"
+    const handleCompletatoChange = (e) => {
+        const isChecked = e.target.checked;
+        setCompletato(isChecked);
+        // Se il gioco è completato, non può essere nella lista desideri
+        if (isChecked) {
+            setInListaDesideri(false);
+        }
+    };
+
+    // Handler per la checkbox "Aggiungi alla Lista Desideri"
+    const handleInListaDesideriChange = (e) => {
+        const isChecked = e.target.checked;
+        setInListaDesideri(isChecked);
+        // Se il gioco è nella lista desideri, non è completato e non ha un voto
+        if (isChecked) {
+            setCompletato(false);
+            setVotoPersonale(0); // Resetta il voto se va in wishlist
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault(); 
@@ -30,8 +52,9 @@ function AddGioco() {
             Genere: genere,
             Piattaforma: piattaforma,
             Completato: completato,
-            VotoPersonale: parseFloat(votoPersonale) 
-
+            // Se il gioco è in lista desideri, il voto personale deve essere 0
+            VotoPersonale: inListaDesideri ? 0 : parseFloat(votoPersonale), 
+            InListaDesideri: inListaDesideri 
         };
 
         console.log("Dati inviati:", payloadToSend); 
@@ -49,15 +72,21 @@ function AddGioco() {
                 setMessage('Gioco aggiunto con successo!');
                 
                 setTimeout(() => {
-                    navigate('/giochi');
+                    if (inListaDesideri) {
+                        navigate('/giochi-da-giocare'); 
+                    } else if (completato) {
+                        navigate('/giochi-completati'); 
+                    } else {
+                        navigate('/giochi-in-corso'); 
+                    }
                 }, 1500);
             } else {
-                const errorData = await response.json(); // Tenta di leggere la risposta JSON per dettagli
+                const errorData = await response.json(); 
                 const errorMessage = errorData.errors ?
                     Object.values(errorData.errors).flat().join('; ') :
                     (errorData.title || 'Errore sconosciuto durante l\'aggiunta del gioco.');
                 setError(`Errore: ${response.status} - ${errorMessage}`);
-                console.error("Dettagli errore backend:", errorData); // Logga i dettagli completi per debugging
+                console.error("Dettagli errore backend:", errorData); 
             }
         } catch (err) {
             console.error('Errore di rete o server:', err);
@@ -143,7 +172,7 @@ function AddGioco() {
                         type="checkbox"
                         id="completato"
                         checked={completato} 
-                        onChange={(e) => setCompletato(e.target.checked)}
+                        onChange={handleCompletatoChange} // Usa il nuovo handler
                     />
                     <label htmlFor="completato">Completato</label>
                 </div>
@@ -158,7 +187,19 @@ function AddGioco() {
                         min="0"
                         max="10"
                         step="0.5"
+                        disabled={inListaDesideri} // Disabilita se in lista desideri
                     />
+                </div>
+
+                {/* *** CAMPO PER LA LISTA DESIDERI *** */}
+                <div className="form-group checkbox-group">
+                    <input
+                        type="checkbox"
+                        id="inListaDesideri"
+                        checked={inListaDesideri}
+                        onChange={handleInListaDesideriChange} // Usa il nuovo handler
+                    />
+                    <label htmlFor="inListaDesideri">Aggiungi alla Lista Desideri</label>
                 </div>
 
                 <button type="submit" className="button primary-button submit-button">
