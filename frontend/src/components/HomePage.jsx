@@ -22,7 +22,7 @@ function HomePage() {
 
             {/* Il footer */}
             <footer className="home-footer-new">
-                <p>&copy; {new Date().getFullYear()} Il Tuo Diario di Giochi. Ogni gioco, una pagina. Ogni sessione, un'emozione.</p>
+                <p>&copy; {new Date().getFullYear()} Dicuonzo Carlo. Ogni gioco, una crescita. Ogni sessione, un'emozione.</p>
             </footer>
         </div>
     );

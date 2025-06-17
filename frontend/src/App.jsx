@@ -8,6 +8,7 @@ import AddGioco from './components/AddGioco';
 import GiochiCorso from './components/GiochiCorso'; 
 import GiochiCompletati from './components/GiochiCompletati'; 
 import ListaDesideri from './components/ListaDesideri';
+import GiocoDettaglio from './components/GiocoDettaglio';
 
 function App() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -77,7 +78,7 @@ function App() {
                     {/* Mantenute le rotte placeholder per gli altri stati */}
                     <Route path="/giochi-completati" element={<GiochiCompletati/>} />
                     <Route path="/giochi-da-giocare" element={<ListaDesideri/>} />
-                    <Route path="/giochi/:id" element={<h2>Dettaglio Gioco (WIP)</h2>} />
+                    <Route path="/giochi/:id" element={<GiocoDettaglio/>} />
                 </Routes>
             </main>
         </Router>

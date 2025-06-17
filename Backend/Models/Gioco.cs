@@ -14,6 +14,8 @@ namespace GiochiPreferiti.Models
         public decimal VotoPersonale { get; set; }
 
         public bool InListaDesideri { get; set; }
+
+        public string? CommentoPersonale { get; set; }
     }
 
 }
