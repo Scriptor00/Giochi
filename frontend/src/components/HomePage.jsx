@@ -8,7 +8,7 @@ function HomePage() {
                 <div className="hero-content">
                     <h1 className="hero-title">Il Mio Diario di Giochi</h1>
                     <p className="hero-subtitle">
-                        Benvenuto nel tuo santuario videoludico personale.
+                        Benvenuto nel mio santuario videoludico personale.
                         Qui ogni avventura prende vita e ogni ricordo è custodito.
                     </p>
                     <Link to="/giochi" className="button primary-button hero-button">
@@ -20,7 +20,6 @@ function HomePage() {
                 </div>
             </section>
 
-            {/* Il footer */}
             <footer className="home-footer-new">
                 <p>&copy; {new Date().getFullYear()} Dicuonzo Carlo. Ogni gioco, una crescita. Ogni sessione, un'emozione.</p>
             </footer>

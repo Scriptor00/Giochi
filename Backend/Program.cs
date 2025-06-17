@@ -1,12 +1,21 @@
 using GiochiPreferiti.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
+using Serilog;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Aggiungi i servizi al contenitore.
+// Configura Serilog per il logging
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("C:\\LogsGiochi\\app-log-.txt", rollingInterval: RollingInterval.Day)
+    .Enrich.FromLogContext()
+    .MinimumLevel.Debug()
+    .CreateLogger();
 
-// 1. Configura il DbContext con SQL Server
+builder.Logging.ClearProviders();
+builder.Host.UseSerilog();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

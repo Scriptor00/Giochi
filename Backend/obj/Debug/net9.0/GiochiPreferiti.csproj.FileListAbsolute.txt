@@ -193,3 +193,12 @@ C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\GiochiPref
 C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\GiochiPreferiti.genruntimeconfig.cache
 C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\ref\GiochiPreferiti.dll
 C:\Users\A573_Apulia\Desktop\GiochiPreferiti\Backend\obj\Debug\net9.0\GiochiPreferiti.sourcelink.json
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.AspNetCore.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Extensions.Hosting.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Extensions.Logging.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Formatting.Compact.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Settings.Configuration.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Sinks.Console.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Sinks.Debug.dll
+C:\Users\A573_Apulia\Desktop\GiochiPreferiti\backend\bin\Debug\net9.0\Serilog.Sinks.File.dll
