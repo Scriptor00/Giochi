@@ -90,6 +90,10 @@ app.UseCors(); // Applica la DefaultPolicy definita sopra
 // 5. Abilita l'autorizzazione (se userai l'autenticazione/autorizzazione)
 app.UseAuthorization();
 
+ app.MapGet("/", () => Results.Content(
+        "<html><body><h1>Benvenuto nel Backend!</h1><p>Questa pagina racchiude le API per la mia collezione di giochi.</p><p>Consulta la documentazione API a <a href=\"/swagger\">/swagger</a></p></body></html>", 
+        "text/html"));
+
 // 6. Mappa i controller alle richieste HTTP
 app.MapControllers();
 
