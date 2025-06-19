@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configura Serilog per il logging
+// Serilog per il logging
 Log.Logger = new LoggerConfiguration()
     .WriteTo.File("C:\\LogsGiochi\\app-log-.txt", rollingInterval: RollingInterval.Day)
     .Enrich.FromLogContext()
@@ -19,14 +19,14 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Aggiungi i controller per la Web API
+// controller per la Web API
 builder.Services.AddControllers();
 
-// 3. Configura Swagger/OpenAPI per la documentazione API (utile in sviluppo)
+// Configurazione Swagger per la documentazione API (utile in sviluppo)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 4. Configurazione CORS (Cross-Origin Resource Sharing)
+// Configurazione CORS (Cross-Origin Resource Sharing)
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -58,10 +58,9 @@ app.UseHttpsRedirection();
 // 3. Abilita il routing per far corrispondere le richieste agli endpoint
 app.UseRouting();
 
-// 4. Abilita CORS. Deve essere DOPO UseRouting() e PRIMA di UseAuthorization() e MapControllers().
 app.UseCors(); // Applica la DefaultPolicy definita sopra
 
-// 5. Abilita l'autorizzazione (se userai l'autenticazione/autorizzazione)
+// 5. Abilita l'autorizzazione 
 app.UseAuthorization();
 
  app.MapGet("/", () => Results.Content(
