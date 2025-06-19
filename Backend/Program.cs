@@ -32,38 +32,12 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            // Per lo sviluppo, specifica l'origine esatta del tuo frontend React.
-            // NON USARE AllowAnyOrigin() insieme a AllowCredentials()!
-            // L'URL predefinito di Vite (React) è http://localhost:5173.
-            // Se il tuo frontend gira su una porta diversa, CAMBIALA QUI!
-            policy.WithOrigins("http://localhost:5173") // <-- Controlla la porta del tuo React dev server!
+            policy.WithOrigins("http://localhost:5173") 
                   .AllowAnyHeader()    // Permette qualsiasi header nelle richieste
                   .AllowAnyMethod()    // Permette qualsiasi metodo HTTP (GET, POST, PUT, DELETE)
                   .AllowCredentials(); // Permette l'invio di credenziali (es. cookies, header di autorizzazione)
 
-            // Se in futuro avrai bisogno di altre origini (es. per produzione), aggiungile qui:
-            // policy.WithOrigins("https://tuodominiofrontend.com", "https://altrodominio.com")
-            //       .AllowAnyHeader()
-            //       .AllowAnyMethod()
-            //       .AllowCredentials();
-
-            // Rimuovi o commenta questo blocco, altrimenti genera l'errore se AllowCredentials() è presente.
-            // if (builder.Environment.IsDevelopment())
-            // {
-            //     policy.AllowAnyOrigin() // Questo è il problema se AllowCredentials() è abilitato
-            //           .AllowAnyHeader()
-            //           .AllowAnyMethod();
-            // }
-            // else
-            // {
-            //     // In produzione, Sii SEMPRE SPECIFICO con le origini per sicurezza!
-            //     // Esempio per produzione, se con credenziali:
-            //     // policy.WithOrigins("https://tuodominiofrontend.com")
-            //     //       .AllowAnyHeader()
-            //     //       .AllowAnyMethod()
-            //     //       .AllowCredentials();
-            // }
-        });
+  });
 });
 
 
@@ -99,3 +73,4 @@ app.MapControllers();
 
 // Avvia l'applicazione
 app.Run();
+
