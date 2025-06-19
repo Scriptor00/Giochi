@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jyXpevrH8Ew=",
+  "dgSpecHash": "r/iu72rFunw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\backend\\GiochiPreferiti.csproj",
+  "projectFilePath": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\Backend\\GiochiPreferiti.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\A573_Apulia\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\A573_Apulia\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

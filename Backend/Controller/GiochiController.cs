@@ -155,7 +155,6 @@ public class GiochiController : ControllerBase
         }
 
         // Il metodo FindAsync recupera l'entità dal contesto di tracciamento o dal database.
-        // Questo è più robusto per gli aggiornamenti parziali e gestisce meglio i campi non inclusi nella PUT.
         var existingGioco = await _context.Giochi.FindAsync(id);
         if (existingGioco == null)
         {
@@ -163,7 +162,6 @@ public class GiochiController : ControllerBase
             return NotFound();
         }
 
-        // Aggiorna solo le proprietà che ti aspetti possano cambiare
         existingGioco.Nome = gioco.Nome;
         existingGioco.DataPubblicazione = gioco.DataPubblicazione;
         existingGioco.UrlImmagine = gioco.UrlImmagine;
@@ -173,7 +171,7 @@ public class GiochiController : ControllerBase
         existingGioco.Completato = gioco.Completato;
         existingGioco.VotoPersonale = gioco.VotoPersonale;
         existingGioco.InListaDesideri = gioco.InListaDesideri;
-        existingGioco.CommentoPersonale = gioco.CommentoPersonale; // Aggiorna anche il commento
+        existingGioco.CommentoPersonale = gioco.CommentoPersonale; 
 
         _context.Entry(existingGioco).State = EntityState.Modified;
 
@@ -193,7 +191,7 @@ public class GiochiController : ControllerBase
             else
             {
                 _logger.LogError(ex, "Errore di concorrenza durante l'aggiornamento del gioco '{NomeGioco}' (ID: {GiocoId}).", existingGioco.Nome, existingGioco.Id);
-                throw; // Rilancia per un errore 500 se è un altro problema di concorrenza
+                throw; 
             }
         }
         catch (Exception ex)

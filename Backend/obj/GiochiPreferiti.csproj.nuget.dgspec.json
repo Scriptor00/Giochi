@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\backend\\GiochiPreferiti.csproj": {}
+    "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\Backend\\GiochiPreferiti.csproj": {}
   },
   "projects": {
-    "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\backend\\GiochiPreferiti.csproj": {
+    "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\Backend\\GiochiPreferiti.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\backend\\GiochiPreferiti.csproj",
+        "projectUniqueName": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\Backend\\GiochiPreferiti.csproj",
         "projectName": "GiochiPreferiti",
-        "projectPath": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\backend\\GiochiPreferiti.csproj",
+        "projectPath": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\Backend\\GiochiPreferiti.csproj",
         "packagesPath": "C:\\Users\\A573_Apulia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\backend\\obj\\",
+        "outputPath": "C:\\Users\\A573_Apulia\\Desktop\\GiochiPreferiti\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

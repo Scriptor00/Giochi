@@ -1,18 +1,26 @@
+// src/components/GiocoDettaglio.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function GiocoDettaglio() {
-    const { id } = useParams(); // Ottiene l'ID del gioco dall'URL
-    const navigate = useNavigate(); 
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-    const [gioco, setGioco] = useState(null); 
-    const [loading, setLoading] = useState(true); 
-    const [error, setError] = useState(null); 
-    const [personalComment, setPersonalComment] = useState(''); 
-    const [displayComment, setDisplayComment] = useState(''); // Stato per il commento visualizzato (dopo il salvataggio o caricamento iniziale)
-    const [isEditingComment, setIsEditingComment] = useState(false); // Statp per gestire la modalità di modifica
-    const [message, setMessage] = useState(null); // Messaggi di successo
-    const [errorMessage, setErrorMessage] = useState(null); // Messaggi di errore
+    const [gioco, setGioco] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Stato per il commento personale
+    const [personalComment, setPersonalComment] = useState('');
+    const [displayComment, setDisplayComment] = useState('');
+    const [isEditingComment, setIsEditingComment] = useState(false);
+
+    // stati per la gestione del completamento e voto
+    const [showCompletionForm, setShowCompletionForm] = useState(false); // Controlla la visibilità del form
+    const [tempRating, setTempRating] = useState(0); // Voto temporaneo per l'input form
+
+    const [message, setMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     // Effetto per il fetching dei dettagli del gioco all'avvio del componente o al cambio di ID
     useEffect(() => {
@@ -31,9 +39,14 @@ function GiocoDettaglio() {
                 }
                 const data = await response.json();
                 setGioco(data);
-                setPersonalComment(data.commentoPersonale || ''); 
-                setDisplayComment(data.commentoPersonale || ''); 
-                setIsEditingComment(data.commentoPersonale === null || data.commentoPersonale === ''); // Entra in modalità modifica se non c'è commento
+                
+                setPersonalComment(data.commentoPersonale || '');
+                setDisplayComment(data.commentoPersonale || '');
+                setIsEditingComment(data.commentoPersonale === null || data.commentoPersonale === '');
+
+                // Inizializza il voto temporaneo con il voto esistente, se presente
+                setTempRating(data.votoPersonale || 0);
+
             } catch (err) {
                 console.error("Errore durante il fetch del dettaglio gioco:", err);
                 setError(`Impossibile caricare i dettagli del gioco. ${err.message}`);
@@ -43,7 +56,7 @@ function GiocoDettaglio() {
         };
 
         fetchGiocoDettaglio();
-    }, [id]); 
+    }, [id]);
 
     // Funzione per salvare il commento personale
     const handleSaveComment = async () => {
@@ -56,10 +69,9 @@ function GiocoDettaglio() {
         }
 
         try {
-            // Crea un oggetto gioco aggiornato con il nuovo commento
             const updatedGioco = {
                 ...gioco,
-                commentoPersonale: personalComment // Invia il commento dallo stato di input
+                commentoPersonale: personalComment
             };
 
             const response = await fetch(`http://localhost:5038/Giochi/${id}`, {
@@ -72,11 +84,11 @@ function GiocoDettaglio() {
 
             if (response.ok) {
                 setMessage('Commento salvato con successo!');
-                setGioco(updatedGioco); // Aggiorna i dati del gioco nello stato locale
-                setDisplayComment(personalComment); // Aggiorna il commento visualizzato
-                setIsEditingComment(false); // Esce dalla modalità di modifica
+                setGioco(updatedGioco);
+                setDisplayComment(personalComment);
+                setIsEditingComment(false);
                 setTimeout(() => {
-                    setMessage(null); 
+                    setMessage(null);
                 }, 3000);
             } else {
                 const errorData = await response.json();
@@ -92,12 +104,66 @@ function GiocoDettaglio() {
         }
     };
 
-    // Funzione per entrare in modalità modifica
+    // Funzione per entrare in modalità modifica commento
     const handleEditComment = () => {
         setIsEditingComment(true);
-        setMessage(null); // Pulisci eventuali messaggi
+        setMessage(null);
         setErrorMessage(null);
         setPersonalComment(displayComment); 
+    };
+
+    // NUOVA FUNZIONE: per salvare lo stato di completamento e il voto
+    const handleSaveCompletion = async () => {
+        setMessage(null);
+        setErrorMessage(null);
+
+        if (!gioco) {
+            setErrorMessage("Errore: Dati del gioco non disponibili.");
+            return;
+        }
+
+        // Valida il voto
+        const rating = parseFloat(tempRating);
+        if (isNaN(rating) || rating < 0 || rating > 10) {
+            setErrorMessage("Il voto deve essere un numero tra 0 e 10.");
+            return;
+        }
+
+        try {
+            const updatedGioco = {
+                ...gioco,
+                completato: true, // Marca come completato
+                votoPersonale: rating, // Inserisce il voto
+                inListaDesideri: false // Rimuove dalla lista desideri se completato
+            };
+
+            const response = await fetch(`http://localhost:5038/Giochi/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedGioco)
+            });
+
+            if (response.ok) {
+                setMessage('Stato di completamento e voto salvati con successo!');
+                setGioco(updatedGioco); // Aggiorna lo stato del gioco con i nuovi dati
+                setShowCompletionForm(false); // Chiude il form
+                setTimeout(() => {
+                    setMessage(null);
+                }, 3000);
+            } else {
+                const errorData = await response.json();
+                const msg = errorData.errors ? 
+                            Object.values(errorData.errors).flat().join('; ') : 
+                            (errorData.title || 'Errore sconosciuto durante il salvataggio.');
+                setErrorMessage(`Errore nel salvataggio dello stato di completamento: ${msg}`);
+                console.error("Dettagli errore backend:", errorData);
+            }
+        } catch (err) {
+            console.error("Errore di rete o server durante il salvataggio del completamento:", err);
+            setErrorMessage('Impossibile connettersi al server per salvare lo stato di completamento.');
+        }
     };
 
     // Renderizza lo stato di caricamento
@@ -152,19 +218,51 @@ function GiocoDettaglio() {
                     <p className="gioco-meta"><strong>Genere:</strong> {gioco.genere}</p>
                     <p className="gioco-meta"><strong>Piattaforma:</strong> {gioco.piattaforma}</p>
                     
-                    {/* Logica di visualizzazione dello stato/voto/commento */}
-                    {gioco.completato ? (
-                        <>
-                            <p className="gioco-meta"><strong>Stato:</strong> <span className="voto-completato">Completato</span></p>
-                            {gioco.votoPersonale != null && (
-                                <p className="gioco-meta"><strong>Voto Personale:</strong> <span className="voto-completato">{gioco.votoPersonale}/10</span></p>
-                            )}
-                        </>
-                    ) : gioco.inListaDesideri ? (
-                        <p className="gioco-meta"><strong>Stato:</strong> <span className="stato-da-giocare">Da giocare</span></p>
-                    ) : (
-                        <p className="gioco-meta"><strong>Stato:</strong> <span className="stato-in-corso">In corso</span></p>
-                    )}
+                    {/* Sezione Stato e Voto Personale */}
+                    <div className="gioco-status-section">
+                        <h2 className="section-title">Stato e Voto:</h2>
+                        {gioco.completato ? (
+                            <div className="status-display">
+                                <p className="gioco-meta"><strong>Stato:</strong> <span className="voto-completato">Completato</span></p>
+                                {gioco.votoPersonale != null && (
+                                    <p className="gioco-meta"><strong>Voto Personale:</strong> <span className="voto-completato">{gioco.votoPersonale}/10</span></p>
+                                )}
+                                <button onClick={() => setShowCompletionForm(true)} className="edit-status-button">Modifica Stato/Voto</button>
+                            </div>
+                        ) : gioco.inListaDesideri ? (
+                            <div className="status-display">
+                                <p className="gioco-meta"><strong>Stato:</strong> <span className="stato-da-giocare">Da giocare</span></p>
+                                <button onClick={() => setShowCompletionForm(true)} className="mark-complete-button">Gioco Terminato? Cliccami!</button>
+                            </div>
+                        ) : ( // Implicito: in corso
+                            <div className="status-display">
+                                <p className="gioco-meta"><strong>Stato:</strong> <span className="stato-in-corso">In corso</span></p>
+                                <button onClick={() => setShowCompletionForm(true)} className="mark-complete-button">Gioco Terminato? Cliccami!</button>
+                            </div>
+                        )}
+
+                        {/* Form per Completamento e Voto (mostrato condizionalmente) */}
+                        {showCompletionForm && (
+                            <div className="completion-form">
+                                <label htmlFor="personalRating" className="rating-label">Voto Personale (0-10):</label>
+                                <input
+                                    type="number"
+                                    id="personalRating"
+                                    className="rating-input"
+                                    value={tempRating}
+                                    onChange={(e) => setTempRating(e.target.value)}
+                                    min="0"
+                                    max="10"
+                                    step="0.5" // Permetti mezzi voti
+                                />
+                                <div className="form-buttons">
+                                    <button onClick={handleSaveCompletion} className="save-completion-button">Salva</button>
+                                    <button onClick={() => setShowCompletionForm(false)} className="cancel-button">Annulla</button>
+                                </div>
+                            </div>
+                        )}
+                    </div> {/* Fine Sezione Stato e Voto Personale */}
+
 
                     <div className="gioco-trama-section">
                         <h2 className="section-title">Trama:</h2>
@@ -173,7 +271,7 @@ function GiocoDettaglio() {
                 </div>
             </div>
 
-            {/* Sezione Commento Personale */}
+            {/* Sezione Commento Personale (visibile per giochi completati o in corso) */}
             {gioco.completato || !gioco.inListaDesideri ? (
                 <div className="gioco-comment-section">
                     <h2 className="section-title">Il Mio Commento Personale:</h2>
@@ -195,6 +293,7 @@ function GiocoDettaglio() {
                             </button>
                         </>
                     ) : (
+                        // Mostra il commento come testo normale
                         <div className="comment-display-area">
                             {displayComment ? (
                                 <p className="gioco-comment-text">{displayComment}</p>
@@ -211,6 +310,7 @@ function GiocoDettaglio() {
                 <p className="no-comment-message">Il commento personale è disponibile per i giochi "In Corso" o "Completati".</p>
             )}
 
+            {/* Stili CSS inclusi direttamente nel componente */}
             <style jsx>{`
                 .gioco-dettaglio-container {
                     max-width: 900px;
@@ -316,6 +416,113 @@ function GiocoDettaglio() {
                     margin-bottom: 1rem;
                 }
 
+                /* NUOVI STILI PER LA SEZIONE STATO E VOTO */
+                .gioco-status-section {
+                    margin-top: 1.5rem;
+                    padding-top: 1.5rem;
+                    border-top: 1px solid #4a5568;
+                }
+
+                .status-display {
+                    margin-bottom: 1rem;
+                    padding: 0.75rem;
+                    background-color: #2d3748;
+                    border-radius: 0.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .mark-complete-button, .edit-status-button {
+                    background-color: #4CAF50; /* Verde per completato */
+                    color: white;
+                    padding: 0.7rem 1.5rem;
+                    border: none;
+                    border-radius: 0.5rem;
+                    cursor: pointer;
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    transition: background-color 0.2s ease, transform 0.2s ease;
+                    margin-top: 0.5rem;
+                }
+
+                .mark-complete-button:hover, .edit-status-button:hover {
+                    background-color: #45a049;
+                    transform: translateY(-1px);
+                }
+
+                .completion-form {
+                    margin-top: 1rem;
+                    padding: 1rem;
+                    background-color: #2d3748;
+                    border-radius: 0.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .rating-label {
+                    color: #e2e8f0;
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+
+                .rating-input {
+                    width: 100%;
+                    padding: 0.8rem;
+                    border-radius: 0.5rem;
+                    border: 1px solid #4a5568;
+                    background-color: #1a202c;
+                    color: #ffffff;
+                    font-size: 1rem;
+                    outline: none;
+                }
+
+                .rating-input:focus {
+                    border-color: #a78bfa;
+                    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.4);
+                }
+
+                .form-buttons {
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: flex-end; /* Allinea i bottoni a destra */
+                    margin-top: 0.5rem;
+                }
+
+                .save-completion-button, .cancel-button {
+                    padding: 0.7rem 1.5rem;
+                    border-radius: 0.5rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+
+                .save-completion-button {
+                    background-color: #4c7c5c; /* Verde scuro */
+                    color: white;
+                    border: none;
+                }
+
+                .save-completion-button:hover {
+                    background-color: #3f604b;
+                    transform: translateY(-1px);
+                }
+
+                .cancel-button {
+                    background-color: #6c757d; /* Grigio */
+                    color: white;
+                    border: none;
+                }
+
+                .cancel-button:hover {
+                    background-color: #5a6268;
+                    transform: translateY(-1px);
+                }
+
+                /* Fine NUOVI STILI PER LA SEZIONE STATO E VOTO */
+
+
                 .gioco-comment-section {
                     background-color: #1f2937;
                     padding: 1.5rem;
@@ -333,7 +540,7 @@ function GiocoDettaglio() {
                     color: #ffffff;
                     font-size: 1rem;
                     min-height: 120px;
-                    resize: vertical; /* Permette il ridimensionamento verticale */
+                    resize: vertical;
                     outline: none;
                     transition: border-color 0.2s ease, box-shadow 0.2s ease;
                 }
@@ -345,10 +552,10 @@ function GiocoDettaglio() {
 
                 .save-comment-button, .edit-comment-button {
                     display: block;
-                    width: auto; /* Adatta la larghezza al contenuto */
+                    width: auto;
                     margin-top: 1.5rem;
                     padding: 0.8rem 2rem;
-                    background: linear-gradient(to right, #60a5fa, #8b5cf6); /* Gradiente blu-viola */
+                    background: linear-gradient(to right, #60a5fa, #8b5cf6);
                     color: #ffffff;
                     font-weight: 700;
                     border: none;
@@ -371,7 +578,7 @@ function GiocoDettaglio() {
                 }
 
                 .success-message {
-                    background-color: #28a745; /* Verde per successo */
+                    background-color: #28a745;
                     color: white;
                     padding: 0.8rem;
                     border-radius: 0.5rem;
@@ -381,7 +588,7 @@ function GiocoDettaglio() {
                 }
 
                 .error-message {
-                    background-color: #dc3545; /* Rosso per errore */
+                    background-color: #dc3545;
                     color: white;
                     padding: 0.8rem;
                     border-radius: 0.5rem;
@@ -391,7 +598,7 @@ function GiocoDettaglio() {
                 }
 
                 .back-button {
-                    background-color: #4a5568; /* Grigio scuro per il bottone indietro */
+                    background-color: #4a5568;
                     color: white;
                     padding: 0.7rem 1.2rem;
                     border-radius: 0.5rem;
@@ -422,7 +629,6 @@ function GiocoDettaglio() {
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                 }
 
-                /* Stili per la visualizzazione del commento non in modifica */
                 .comment-display-area {
                     background-color: #2d3748;
                     padding: 1rem;
@@ -435,7 +641,7 @@ function GiocoDettaglio() {
                     color: #ffffff;
                     font-size: 1rem;
                     line-height: 1.6;
-                    white-space: pre-wrap; /* Mantiene gli a capo e gli spazi */
+                    white-space: pre-wrap;
                 }
                 
                 .gioco-comment-text.no-comment-yet {
@@ -445,17 +651,17 @@ function GiocoDettaglio() {
 
                 /* Colori per gli stati (coerenti con GiochiList) */
                 .voto-completato {
-                    color: #34d399; /* Verde acqua per i voti */
+                    color: #34d399;
                     font-weight: bold;
                 }
 
                 .stato-da-giocare {
-                    color: #60a5fa; /* Blu per "Da giocare" */
+                    color: #60a5fa;
                     font-weight: bold;
                 }
 
                 .stato-in-corso {
-                    color: #fbbf24; /* Giallo/arancio per "In corso" */
+                    color: #fbbf24;
                     font-weight: bold;
                 }
 
@@ -481,10 +687,14 @@ function GiocoDettaglio() {
                     .section-title {
                         font-size: 1.5rem;
                     }
-                    .save-comment-button, .edit-comment-button, .back-button {
+                    .save-comment-button, .edit-comment-button, .mark-complete-button, .edit-status-button,
+                    .save-completion-button, .cancel-button, .back-button {
                         width: 100%;
                         margin-left: 0;
                         margin-right: 0;
+                    }
+                    .form-buttons {
+                        justify-content: center; /* Centra i bottoni nel form su mobile */
                     }
                 }
 
