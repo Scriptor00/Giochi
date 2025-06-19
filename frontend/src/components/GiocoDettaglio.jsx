@@ -112,7 +112,7 @@ function GiocoDettaglio() {
         setPersonalComment(displayComment); 
     };
 
-    // NUOVA FUNZIONE: per salvare lo stato di completamento e il voto
+    // funzione per salvare lo stato di completamento e il voto
     const handleSaveCompletion = async () => {
         setMessage(null);
         setErrorMessage(null);
@@ -310,7 +310,6 @@ function GiocoDettaglio() {
                 <p className="no-comment-message">Il commento personale è disponibile per i giochi "In Corso" o "Completati".</p>
             )}
 
-            {/* Stili CSS inclusi direttamente nel componente */}
             <style jsx>{`
                 .gioco-dettaglio-container {
                     max-width: 900px;
