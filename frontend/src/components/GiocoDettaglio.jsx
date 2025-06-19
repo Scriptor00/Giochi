@@ -17,7 +17,7 @@ function GiocoDettaglio() {
 
     // stati per la gestione del completamento e voto
     const [showCompletionForm, setShowCompletionForm] = useState(false); // Controlla la visibilità del form
-    const [tempRating, setTempRating] = useState(0); // Voto temporaneo per l'input form
+    const [tempRating, setTempRating] = useState(''); 
 
     const [message, setMessage] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
@@ -42,10 +42,13 @@ function GiocoDettaglio() {
                 
                 setPersonalComment(data.commentoPersonale || '');
                 setDisplayComment(data.commentoPersonale || '');
+                // Imposta isEditingComment a true se non c'è un commento esistente
                 setIsEditingComment(data.commentoPersonale === null || data.commentoPersonale === '');
 
-                // Inizializza il voto temporaneo con il voto esistente, se presente
-                setTempRating(data.votoPersonale || 0);
+                //  Inizializzo il voto temporaneo
+                // Se data.votoPersonale è null, imposta tempRating a stringa vuota ('') per mostrare il placeholder.
+                // Altrimenti, converti il numero in stringa per l'input.
+                setTempRating(data.votoPersonale != null ? data.votoPersonale.toString() : '');
 
             } catch (err) {
                 console.error("Errore durante il fetch del dettaglio gioco:", err);
@@ -112,7 +115,7 @@ function GiocoDettaglio() {
         setPersonalComment(displayComment); 
     };
 
-    // funzione per salvare lo stato di completamento e il voto
+    // Funzione per salvare lo stato di completamento e il voto
     const handleSaveCompletion = async () => {
         setMessage(null);
         setErrorMessage(null);
@@ -123,17 +126,27 @@ function GiocoDettaglio() {
         }
 
         // Valida il voto
-        const rating = parseFloat(tempRating);
-        if (isNaN(rating) || rating < 0 || rating > 10) {
-            setErrorMessage("Il voto deve essere un numero tra 0 e 10.");
+        // Se tempRating è una stringa vuota, parseFloat('') restituisce NaN, che è gestito.
+        const rating = parseFloat(tempRating); 
+        
+        // Determina il valore effettivo da inviare per votoPersonale:
+        // Se tempRating è vuoto o NaN, invia null.
+        // Altrimenti, invia il numero parsato.
+        let votoToSend = null;
+        if (!isNaN(rating) && rating >= 0 && rating <= 10) {
+            votoToSend = rating;
+        } else if (tempRating === '') { // Se l'utente ha svuotato il campo, invia null
+            votoToSend = null;
+        } else { // Se ha inserito qualcosa di non numerico e non vuoto
+            setErrorMessage("Il voto deve essere un numero tra 0 e 10 (o vuoto).");
             return;
         }
 
         try {
             const updatedGioco = {
                 ...gioco,
-                completato: true, // Marca come completato
-                votoPersonale: rating, // Inserisce il voto
+                completato: true, // Imposta il gioco come completato
+                votoPersonale: votoToSend, // Usa il voto validato
                 inListaDesideri: false // Rimuove dalla lista desideri se completato
             };
 
@@ -148,6 +161,8 @@ function GiocoDettaglio() {
             if (response.ok) {
                 setMessage('Stato di completamento e voto salvati con successo!');
                 setGioco(updatedGioco); // Aggiorna lo stato del gioco con i nuovi dati
+                // Aggiorna tempRating per riflettere il valore salvato (null o number)
+                setTempRating(updatedGioco.votoPersonale != null ? updatedGioco.votoPersonale.toString() : '');
                 setShowCompletionForm(false); // Chiude il form
                 setTimeout(() => {
                     setMessage(null);
@@ -224,20 +239,21 @@ function GiocoDettaglio() {
                         {gioco.completato ? (
                             <div className="status-display">
                                 <p className="gioco-meta"><strong>Stato:</strong> <span className="voto-completato">Completato</span></p>
+                                {/* Mostra il voto solo se non è null */}
                                 {gioco.votoPersonale != null && (
                                     <p className="gioco-meta"><strong>Voto Personale:</strong> <span className="voto-completato">{gioco.votoPersonale}/10</span></p>
                                 )}
-                                <button onClick={() => setShowCompletionForm(true)} className="edit-status-button">Modifica Stato/Voto</button>
+                                <button onClick={() => { setShowCompletionForm(true); setTempRating(gioco.votoPersonale != null ? gioco.votoPersonale.toString() : ''); }} className="edit-status-button">Modifica Stato/Voto</button>
                             </div>
                         ) : gioco.inListaDesideri ? (
                             <div className="status-display">
                                 <p className="gioco-meta"><strong>Stato:</strong> <span className="stato-da-giocare">Da giocare</span></p>
-                                <button onClick={() => setShowCompletionForm(true)} className="mark-complete-button">Gioco Terminato? Cliccami!</button>
+                                <button onClick={() => { setShowCompletionForm(true); setTempRating(''); }} className="mark-complete-button">Gioco Terminato? Cliccami!</button>
                             </div>
                         ) : ( // Implicito: in corso
                             <div className="status-display">
                                 <p className="gioco-meta"><strong>Stato:</strong> <span className="stato-in-corso">In corso</span></p>
-                                <button onClick={() => setShowCompletionForm(true)} className="mark-complete-button">Gioco Terminato? Cliccami!</button>
+                                <button onClick={() => { setShowCompletionForm(true); setTempRating(''); }} className="mark-complete-button">Gioco Terminato? Cliccami!</button>
                             </div>
                         )}
 
@@ -249,11 +265,12 @@ function GiocoDettaglio() {
                                     type="number"
                                     id="personalRating"
                                     className="rating-input"
-                                    value={tempRating}
+                                    value={tempRating} // Qui è stringa o numero
                                     onChange={(e) => setTempRating(e.target.value)}
                                     min="0"
                                     max="10"
-                                    step="0.5" // Permetti mezzi voti
+                                    step="0.5" 
+                                    placeholder="Inserisci il tuo voto" 
                                 />
                                 <div className="form-buttons">
                                     <button onClick={handleSaveCompletion} className="save-completion-button">Salva</button>
@@ -310,6 +327,7 @@ function GiocoDettaglio() {
                 <p className="no-comment-message">Il commento personale è disponibile per i giochi "In Corso" o "Completati".</p>
             )}
 
+            {/* Stili CSS inclusi direttamente nel componente */}
             <style jsx>{`
                 .gioco-dettaglio-container {
                     max-width: 900px;

@@ -9,7 +9,7 @@ function AddGioco() {
     const [genere, setGenere] = useState('');
     const [piattaforma, setPiattaforma] = useState('');
     const [completato, setCompletato] = useState(false);
-    const [votoPersonale, setVotoPersonale] = useState(0);
+    const [votoPersonale, setVotoPersonale] = useState('');
     const [inListaDesideri, setInListaDesideri] = useState(false); 
 
     const [message, setMessage] = useState(null); 
@@ -34,7 +34,7 @@ function AddGioco() {
         // Se il gioco è nella lista desideri, non è completato e non ha un voto
         if (isChecked) {
             setCompletato(false);
-            setVotoPersonale(0); // Resetta il voto se va in wishlist
+            setVotoPersonale(''); 
         }
     };
 
@@ -44,6 +44,14 @@ function AddGioco() {
         setMessage(null); 
         setError(null);
 
+    let votoToSend = null;
+        if (!inListaDesideri) { 
+            const parsedVoto = parseFloat(votoPersonale);
+            if (!isNaN(parsedVoto) && parsedVoto >= 0 && parsedVoto <= 10) {
+                votoToSend = parsedVoto;
+            }
+        }
+
         const payloadToSend = {
             Nome: nome, 
             DataPubblicazione: dataPubblicazione,
@@ -52,8 +60,7 @@ function AddGioco() {
             Genere: genere,
             Piattaforma: piattaforma,
             Completato: completato,
-            // Se il gioco è in lista desideri, il voto personale deve essere 0
-            VotoPersonale: inListaDesideri ? 0 : parseFloat(votoPersonale), 
+            VotoPersonale: votoToSend, 
             InListaDesideri: inListaDesideri 
         };
 
@@ -172,7 +179,7 @@ function AddGioco() {
                         type="checkbox"
                         id="completato"
                         checked={completato} 
-                        onChange={handleCompletatoChange} // Usa il nuovo handler
+                        onChange={handleCompletatoChange} 
                     />
                     <label htmlFor="completato">Completato</label>
                 </div>
@@ -188,6 +195,7 @@ function AddGioco() {
                         max="10"
                         step="0.5"
                         disabled={inListaDesideri} // Disabilita se in lista desideri
+                        placeholder ="Voto"
                     />
                 </div>
 
